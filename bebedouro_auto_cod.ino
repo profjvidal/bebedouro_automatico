@@ -4,8 +4,6 @@ Servo servoMain; // Define Servo motor
 #define trigPin  10
 #define echoPin 11
 
-int range = 5; // Alcance em polegadas
-
 void setup() {
   // Inicializa comunicação serial:
   Serial.begin(9600);
@@ -19,8 +17,8 @@ void setup() {
 void loop()
 {
   // estabelecer variáveis ​​para duração do pulso de som,
-  // e o resultado da distância medido em polegadas e centímetros:
-  long duracao, polegadas, cm;
+  // e o resultado da distância medido em centímetros:
+  long duracao, cm;
 
   // O pulso de som))) é acionado por um pulso ALTO de 2 ou mais microssegundos.
   // Define o pino de controle do trigger (pino de disparo do sensor) para o nível lógico BAIXO. 
@@ -41,30 +39,22 @@ void loop()
   duracao = pulseIn(echoPin, HIGH);
 
   // Converte o tempo do eco (medido em microssegundos) em distância
-  polegadas = microssegundosParaPolegadas(duracao);
   cm = microssegundosParaCentemetro(duracao);
   
   Serial.print(cm);
   Serial.print(" cm");
   Serial.println();
 
-  if(polegadas < 5)
+  if(cm < 10)
   {
    Serial.println("Copo identificado!");
-   servoMain.write(90);  // Gira o Servo de volta para a posição central (90 graus)
-   delay(7000); 
+   servoMain.write(120);  // Gira o Servo para a posição de 120 graus
   }
   else{
    Serial.println("Nenhum copo identificado!");
-   servoMain.write(0);
-   delay(50);
+   servoMain.write(0); // Gira o Servo para a posição central
    }
-  delay(200);
-}
-
-long microssegundosParaPolegadas(long microssegundos)
-{
-  return microssegundos / 74 / 2;
+  delay(500);
 }
 
 long microssegundosParaCentemetro(long microssegundos)
